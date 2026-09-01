@@ -47,7 +47,6 @@
         .post-group { margin-top: 15px; display: flex; flex-direction: column; align-items: flex-start; }
         .post-author { font-size: 13px; font-weight: bold; color: #333; margin-bottom: 3px; }
         
-        /* 🛠️ แก้ไขใหม่: แยกโครงสร้างด้วย Grid 2 คอลัมน์ (ซ้าย=รูปโปรไฟล์, ขวา=กล่องข้อความ) ตัดปัญหาการชนและการดันกันโดยสิ้นเชิง */
         .post-bubble-wrapper { 
             display: grid; 
             grid-template-columns: 32px 1fr; 
@@ -66,7 +65,7 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
             box-sizing: border-box;
             word-break: break-word;
-            grid-column: 2; /* บังคับให้อยู่ในคอลัมน์ขวาเสมอ */
+            grid-column: 2;
         }
 
         .post img, .post video {
@@ -77,7 +76,6 @@
             display: block;
         }
 
-        /* รูปโปรไฟล์จิ๋วฝั่งซ้าย ล็อกให้อยู่ในคอลัมน์ซ้ายนิ่งๆ */
         .chat-avatar-inline {
             width: 28px; 
             height: 28px; 
@@ -89,7 +87,7 @@
             justify-content: center;
             color: white;
             font-size: 12px;
-            grid-column: 1; /* อยู่คอลัมน์ซ้าย */
+            grid-column: 1;
             align-self: flex-end;
         }
 
@@ -98,7 +96,7 @@
 </head>
 <body>
 
-    <!-- 🏗️ แถบด้านบนสุดรวมช่องพิมพ์และโปรไฟล์ -->
+    <!-- แถบด้านบนสุดรวมช่องพิมพ์และโปรไฟล์ -->
     <div class="top-bar">
         <h1>Migang</h1>
 
@@ -142,7 +140,16 @@
     <!-- พื้นที่แสดงแชท -->
     <div id="feed"></div>
 
+    <!-- โหลดไลบรารี Supabase และสคริปต์การทำงานทั้งหมด -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // === 1. ตั้งค่าการเชื่อมต่อ Supabase ===
+        const SUPABASE_URL = 'https://kmnezxhrvfocwjzzxifo.supabase.co/rest/v1/';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttbmV6eGhydmZvY3dqenp4aWZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyNzE5MjcsImV4cCI6MjEwMzg0NzkyN30.5Q-7yLJfXM6P3hZf04Br_KySZ77g1Z8JBkj4vbiyjg8';
+
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // === 2. ระบบสุ่ม ID และตั้งค่าเริ่มต้น ===
         let currentUserName = "User#" + Math.floor(1000 + Math.random() * 9000);
         let currentUserColor = "#00b894";
         let currentProfileSrc = null;
@@ -229,7 +236,6 @@
                 groupWrapper = topChild;
                 bubblesContainer = groupWrapper.querySelector('.bubbles-container');
                 
-                // ลบรูปโปรไฟล์อันเก่าออกเมื่อมีข้อความใหม่มาต่อในกลุ่มเดิม เพื่อให้เหลือรูปที่ข้อความล่าสุดอันเดียว
                 if (lastMyAvatarWrapper && lastMyAvatarWrapper.parentNode) {
                     let oldAvatar = lastMyAvatarWrapper.querySelector('.chat-avatar-inline');
                     if (oldAvatar) {
@@ -260,7 +266,6 @@
             let bubbleWrapper = document.createElement('div');
             bubbleWrapper.className = 'post-bubble-wrapper';
 
-            // สร้างรูปโปรไฟล์จิ๋วแยกต่างหากในช่องคอลัมน์ซ้าย
             let inlineAvatar;
             if (currentProfileSrc) {
                 inlineAvatar = document.createElement('img');
@@ -305,6 +310,25 @@
             bubblesContainer.appendChild(bubbleWrapper);
         }
 
+        // === 3. ฟังก์ชันบันทึกข้อความลง Supabase และหน้าจอ ===
+        async function sendMessageToSupabase(userName, content, userColor) {
+            const { data, error } = await supabaseClient
+                .from('messages')
+                .insert([
+                    { 
+                        user_name: userName, 
+                        content: content, 
+                        user_color: userColor 
+                    }
+                ]);
+
+            if (error) {
+                console.error('เกิดข้อผิดพลาดในการส่งข้อความ:', error);
+            } else {
+                console.log('ส่งข้อความสำเร็จ:', data);
+            }
+        }
+
         function sendText() {
             let text = document.getElementById('box').value;
             if (text.trim() === '') return;
@@ -313,6 +337,10 @@
             textNode.innerText = text;
 
             createPostContainer(textNode);
+            
+            // ส่งข้อมูลเข้า Supabase 
+            sendMessageToSupabase(currentUserName, text, currentUserColor);
+
             document.getElementById('box').value = '';
         }
 
@@ -334,78 +362,13 @@
                 }
 
                 createPostContainer(mediaElement);
+                
+                // ส่ง URL รูปภาพ/สื่อเข้า Supabase
+                sendMessageToSupabase(currentUserName, fileURL, currentUserColor);
+
                 fileInput.value = '';
             }
         }
-  // === เอาโค้ด Supabase มาวางตรงนี้ได้เลยครับ ===
-  const SUPABASE_URL = 'https://kmnezxhrvfocwjzzxifo.supabase.co/rest/v1/';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttbmV6eGhydmZvY3dqenp4aWZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyNzE5MjcsImV4cCI6MjEwMzg0NzkyN30.5Q-7yLJfXM6P3hZf04Br_KySZ77g1Z8JBkj4vbiyjg8';
-
-  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  async function sendMessage(userName, messageContent, userColor) {
-    const { data, error } = await supabaseClient
-      .from('messages')
-      .insert([
-        { 
-          user_name: userName, 
-          content: messageContent, 
-          user_color: userColor 
-        }
-      ]);
-
-    if (error) {
-      console.error('เกิดข้อผิดพลาดในการส่งข้อความ:', error);
-    } else {
-      console.log('ส่งข้อความสำเร็จ:', data);
-    }
-  }
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-      // === ตั้งค่า Supabase ===
-      const SUPABASE_URL = 'https://kmnezxhrvfocwjzzxifo.supabase.co/rest/v1/';
-      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttbmV6eGhydmZvY3dqenp4aWZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyNzE5MjcsImV4cCI6MjEwMzg0NzkyN30.5Q-7yLJfXM6P3hZf04Br_KySZ77g1Z8JBkj4vbiyjg8';
-
-      const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-      async function sendMessage(userName, messageContent, userColor) {
-        const { data, error } = await supabaseClient
-          .from('messages')
-          .insert([
-            { 
-              user_name: userName, 
-              content: messageContent, 
-              user_color: userColor 
-            }
-          ]);
-
-        if (error) {
-          console.error('เกิดข้อผิดพลาดในการส่งข้อความ:', error);
-        } else {
-          console.log('ส่งข้อความสำเร็จ:', data);
-        }
-      }
-
-      // === โค้ดเชื่อมปุ่มส่งอัตโนมัติ ===
-      document.addEventListener('DOMContentLoaded', () => {
-        const sendButton = document.querySelector('button[type="submit"]') || document.querySelector('#send-btn') || document.querySelector('.send-btn');
-        const messageInput = document.querySelector('input[type="text"]') || document.querySelector('#message-input') || document.querySelector('.message-input');
-
-        if (sendButton && messageInput) {
-          sendButton.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const text = messageInput.value.trim();
-            if (!text) return;
-
-            const userName = window.currentUserName || 'ผู้ใช้งาน Migang';
-            const userColor = window.currentUserColor || '#3b82f6';
-
-            await sendMessage(userName, text, userColor);
-            
-            messageInput.value = '';
-          });
-        }
-      });
     </script>
-  </body>
+</body>
 </html>
