@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Migang</title>
+    
+    <style>
+        body { background: #ffffff; color: #222222; font-family: sans-serif; margin: 0; padding-top: 90px; }
+        
+        /* แถบด้านบนสุดตรึงติดจอ (Sticky Top Bar) */
+        .top-bar { 
+            position: fixed; top: 0; left: 0; width: 100%; 
+            background: #ffffff; border-bottom: 2px solid #eee; 
+            padding: 10px 20px; box-sizing: border-box; 
+            display: flex; justify-content: space-between; align-items: center; gap: 15px;
+            z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            flex-wrap: wrap;
+        }
+
+        h1 { color: #00b894; margin: 0; font-size: 24px; }
+        
+        .input-section-inline { display: flex; align-items: center; gap: 5px; flex-grow: 1; max-width: 500px; justify-content: center; }
+        .top-bar input[type="text"] { width: 100%; padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        
+        .action-btn { background: #00b894; color: white; border: none; padding: 8px 12px; cursor: pointer; font-weight: bold; border-radius: 4px; white-space: nowrap; }
+        .action-btn:hover { background: #00a383; }
+
+        .media-upload-btn { background: #0984e3; color: white; padding: 8px 12px; cursor: pointer; font-weight: bold; border-radius: 4px; display: inline-block; font-size: 14px; white-space: nowrap; }
+        .media-upload-btn:hover { background: #74b9ff; }
+        input[type="file"] { display: none; }
+
+        /* ส่วนโปรไฟล์วงกลมด้านบน */
+        .profile-section { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
+        .profile-pic { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px; }
+        .profile-info { text-align: right; }
+        .user-type { font-size: 11px; color: #666; }
+        .user-id { font-size: 13px; font-weight: bold; color: #00b894; }
+
+        /* หน้าต่างแก้ไขชื่อ */
+        .modal-wrapper { display: flex; justify-content: center; margin: 15px 20px; }
+        #nameModal { display: none; background: #f1f2f6; padding: 15px; border-radius: 5px; border: 1px solid #ddd; width: 100%; max-width: 400px; box-sizing: border-box; }
+        .confirm-btn { background: #0984e3; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
+
+        /* พื้นแสดงโพสต์ */
+        #feed { max-width: 750px; margin: 0 auto; padding: 10px 20px 40px 20px; display: flex; flex-direction: column; }
+
+        .post-group { margin-top: 15px; display: flex; flex-direction: column; align-items: flex-start; }
+        .post-author { font-size: 13px; font-weight: bold; color: #333; margin-bottom: 3px; }
+        
+        /* 🛠️ แก้ไขใหม่: แยกโครงสร้างด้วย Grid 2 คอลัมน์ (ซ้าย=รูปโปรไฟล์, ขวา=กล่องข้อความ) ตัดปัญหาการชนและการดันกันโดยสิ้นเชิง */
+        .post-bubble-wrapper { 
+            display: grid; 
+            grid-template-columns: 32px 1fr; 
+            align-items: end; 
+            gap: 10px; 
+            margin-top: 4px; 
+            width: 100%;
+        }
+        
+        .post { 
+            background: #f9f9f9; 
+            color: #333; 
+            padding: 10px 14px; 
+            border-left: 5px solid #00b894; 
+            border-radius: 4px; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
+            box-sizing: border-box;
+            word-break: break-word;
+            grid-column: 2; /* บังคับให้อยู่ในคอลัมน์ขวาเสมอ */
+        }
+
+        .post img, .post video {
+            max-width: 100%;
+            max-height: 400px;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+        }
+
+        /* รูปโปรไฟล์จิ๋วฝั่งซ้าย ล็อกให้อยู่ในคอลัมน์ซ้ายนิ่งๆ */
+        .chat-avatar-inline {
+            width: 28px; 
+            height: 28px; 
+            border-radius: 50%; 
+            object-fit: cover;
+            background-color: #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            grid-column: 1; /* อยู่คอลัมน์ซ้าย */
+            align-self: flex-end;
+        }
+
+        .color-picker-input { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- 🏗️ แถบด้านบนสุดรวมช่องพิมพ์และโปรไฟล์ -->
+    <div class="top-bar">
+        <h1>Migang</h1>
+
+        <div class="input-section-inline">
+            <input type="text" id="box" placeholder="พิมพ์ข้อความสาธารณะที่นี่..." onkeypress="checkSendEnter(event)">
+            <button class="action-btn" onclick="sendText()">ส่ง</button>
+            
+            <label class="media-upload-btn" title="ส่งรูปหรือวิดีโอ">
+                📸
+                <input type="file" id="mediaInput" accept="image/*,video/*" onchange="sendMediaFile()">
+            </label>
+        </div>
+
+        <div class="profile-section" ondblclick="openNameEditor()">
+            <label for="profileImageInput" title="คลิกเพื่อเปลี่ยนรูปโปรไฟล์" style="cursor: pointer;">
+                <div id="profileContainerDiv">
+                    <div id="defaultAvatar" class="profile-pic" style="background-color: #b2bec3;">👤</div>
+                    <img id="profilePreview" class="profile-pic" style="display: none;" alt="Profile">
+                </div>
+            </label>
+            <input type="file" id="profileImageInput" accept="image/*" onchange="changeProfilePic(event)">
+            
+            <div class="profile-info">
+                <div class="user-type">ผู้ใช้ไม่ระบุตัวตน</div>
+                <div class="user-id" id="displayUserId">ID: กำลังสุ่ม...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- หน้าต่างแก้ไขชื่อ -->
+    <div class="modal-wrapper">
+        <div id="nameModal">
+            <p style="margin: 0 0 8px 0; font-size: 14px;">พิมพ์ชื่อใหม่ของคุณ แล้วกด Enter หรือคลิกยืนยัน:</p>
+            <div style="display: flex; gap: 5px;">
+                <input type="text" id="newNameInput" placeholder="กรอกชื่อใหม่..." onkeypress="checkEnter(event)">
+                <button class="confirm-btn" onclick="saveNewName()">ยืนยัน</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- พื้นที่แสดงแชท -->
+    <div id="feed"></div>
+
+    <script>
+        let currentUserName = "User#" + Math.floor(1000 + Math.random() * 9000);
+        let currentUserColor = "#00b894";
+        let currentProfileSrc = null;
+
+        document.getElementById('displayUserId').innerText = currentUserName;
+
+        let lastMyAvatarWrapper = null; 
+
+        function changeProfilePic(event) {
+            let file = event.target.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    currentProfileSrc = e.target.result;
+                    let preview = document.getElementById('profilePreview');
+                    let defAvatar = document.getElementById('defaultAvatar');
+                    
+                    preview.src = currentProfileSrc;
+                    preview.style.display = "flex";
+                    defAvatar.style.display = "none";
+
+                    updateAllMyInlineAvatars();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateAllMyInlineAvatars() {
+            let avatars = document.querySelectorAll('.chat-avatar-inline');
+            avatars.forEach(av => {
+                if (currentProfileSrc) {
+                    if (av.tagName !== 'IMG') {
+                        let newImg = document.createElement('img');
+                        newImg.className = 'chat-avatar-inline';
+                        newImg.src = currentProfileSrc;
+                        av.parentNode.replaceChild(newImg, av);
+                    } else {
+                        av.src = currentProfileSrc;
+                    }
+                }
+            });
+        }
+
+        function openNameEditor() {
+            let modal = document.getElementById('nameModal');
+            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+            document.getElementById('newNameInput').value = "";
+            document.getElementById('newNameInput').focus();
+        }
+
+        function saveNewName() {
+            let newName = document.getElementById('newNameInput').value.trim();
+            if (newName !== "") {
+                currentUserName = newName;
+                document.getElementById('displayUserId').innerText = currentUserName;
+                document.getElementById('nameModal').style.display = 'none';
+
+                let allAuthors = document.querySelectorAll('.post-author');
+                allAuthors.forEach(authorEl => {
+                    if (authorEl.getAttribute('data-owner') === 'me') {
+                        authorEl.innerText = currentUserName;
+                    }
+                });
+            }
+        }
+
+        function checkEnter(event) {
+            if (event.key === 'Enter') saveNewName();
+        }
+
+        function checkSendEnter(event) {
+            if (event.key === 'Enter') sendText();
+        }
+
+        function createPostContainer(contentElement) {
+            let feed = document.getElementById('feed');
+
+            let topChild = feed.firstElementChild;
+            let isMyLastGroup = topChild && topChild.getAttribute('data-group-owner') === 'me';
+
+            let groupWrapper, bubblesContainer;
+
+            if (isMyLastGroup) {
+                groupWrapper = topChild;
+                bubblesContainer = groupWrapper.querySelector('.bubbles-container');
+                
+                // ลบรูปโปรไฟล์อันเก่าออกเมื่อมีข้อความใหม่มาต่อในกลุ่มเดิม เพื่อให้เหลือรูปที่ข้อความล่าสุดอันเดียว
+                if (lastMyAvatarWrapper && lastMyAvatarWrapper.parentNode) {
+                    let oldAvatar = lastMyAvatarWrapper.querySelector('.chat-avatar-inline');
+                    if (oldAvatar) {
+                        oldAvatar.remove();
+                    }
+                }
+            } else {
+                groupWrapper = document.createElement('div');
+                groupWrapper.className = 'post-group';
+                groupWrapper.setAttribute('data-group-owner', 'me');
+
+                let authorDiv = document.createElement('div');
+                authorDiv.className = 'post-author';
+                authorDiv.setAttribute('data-owner', 'me');
+                authorDiv.innerText = currentUserName;
+                groupWrapper.appendChild(authorDiv);
+
+                bubblesContainer = document.createElement('div');
+                bubblesContainer.style.display = "flex";
+                bubblesContainer.style.flexDirection = "column";
+                bubblesContainer.style.gap = "4px";
+                bubblesContainer.className = "bubbles-container";
+                
+                groupWrapper.appendChild(bubblesContainer);
+                feed.prepend(groupWrapper);
+            }
+
+            let bubbleWrapper = document.createElement('div');
+            bubbleWrapper.className = 'post-bubble-wrapper';
+
+            // สร้างรูปโปรไฟล์จิ๋วแยกต่างหากในช่องคอลัมน์ซ้าย
+            let inlineAvatar;
+            if (currentProfileSrc) {
+                inlineAvatar = document.createElement('img');
+                inlineAvatar.className = 'chat-avatar-inline';
+                inlineAvatar.src = currentProfileSrc;
+            } else {
+                inlineAvatar = document.createElement('div');
+                inlineAvatar.className = 'chat-avatar-inline';
+                inlineAvatar.innerHTML = "👤";
+            }
+
+            bubbleWrapper.appendChild(inlineAvatar);
+
+            let div = document.createElement('div');
+            div.className = 'post';
+            div.setAttribute('data-color-box', 'me');
+            div.style.borderLeftColor = currentUserColor;
+            div.appendChild(contentElement);
+
+            let colorInput = document.createElement('input');
+            colorInput.type = 'color';
+            colorInput.className = 'color-picker-input';
+            colorInput.value = currentUserColor;
+
+            colorInput.addEventListener('input', function() {
+                currentUserColor = colorInput.value;
+                let allPosts = document.querySelectorAll('.post');
+                allPosts.forEach(postEl => {
+                    if (postEl.getAttribute('data-color-box') === 'me') {
+                        postEl.style.borderLeftColor = currentUserColor;
+                    }
+                });
+            });
+
+            div.ondblclick = function() {
+                colorInput.click();
+            };
+
+            bubbleWrapper.appendChild(div);
+
+            lastMyAvatarWrapper = bubbleWrapper;
+            bubblesContainer.appendChild(bubbleWrapper);
+        }
+
+        function sendText() {
+            let text = document.getElementById('box').value;
+            if (text.trim() === '') return;
+            
+            let textNode = document.createElement('div');
+            textNode.innerText = text;
+
+            createPostContainer(textNode);
+            document.getElementById('box').value = '';
+        }
+
+        function sendMediaFile() {
+            let fileInput = document.getElementById('mediaInput');
+            
+            if (fileInput.files && fileInput.files[0]) {
+                let file = fileInput.files[0];
+                let fileURL = URL.createObjectURL(file);
+                let mediaElement;
+
+                if (file.type.startsWith('video/')) {
+                    mediaElement = document.createElement('video');
+                    mediaElement.src = fileURL;
+                    mediaElement.controls = true;
+                } else {
+                    mediaElement = document.createElement('img');
+                    mediaElement.src = fileURL;
+                }
+
+                createPostContainer(mediaElement);
+                fileInput.value = '';
+            }
+        }
+    </script>
+</body>
+</html>
