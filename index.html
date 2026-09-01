@@ -362,30 +362,50 @@
   }
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-     // โค้ดเชื่อมปุ่มส่งอัตโนมัติ (นำไปวางต่อท้ายได้เลยครับ)
-document.addEventListener('DOMContentLoaded', () => {
-  // ค้นหาปุ่มส่งและช่องพิมพ์ข้อความในหน้าเว็บของคุณ
-  const sendButton = document.querySelector('button[type="submit"]') || document.querySelector('#send-btn') || document.querySelector('.send-btn');
-  const messageInput = document.querySelector('input[type="text"]') || document.querySelector('#message-input') || document.querySelector('.message-input');
+      // === ตั้งค่า Supabase ===
+      const SUPABASE_URL = 'https://kmnezxhrvfocwjzzxifo.supabase.co/rest/v1/';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttbmV6eGhydmZvY3dqenp4aWZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyNzE5MjcsImV4cCI6MjEwMzg0NzkyN30.5Q-7yLJfXM6P3hZf04Br_KySZ77g1Z8JBkj4vbiyjg8';
 
-  if (sendButton && messageInput) {
-    sendButton.addEventListener('click', async (e) => {
-      e.preventDefault();
-      const text = messageInput.value.trim();
-      if (!text) return;
+      const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-      // ดึงชื่อผู้ใช้ (ถ้ามี) หรือกำหนดค่าเริ่มต้น
-      const userName = window.currentUserName || 'ผู้ใช้งาน Migang';
-      const userColor = window.currentUserColor || '#3b82f6';
+      async function sendMessage(userName, messageContent, userColor) {
+        const { data, error } = await supabaseClient
+          .from('messages')
+          .insert([
+            { 
+              user_name: userName, 
+              content: messageContent, 
+              user_color: userColor 
+            }
+          ]);
 
-      // เรียกฟังก์ชันส่งข้อมูลเข้า Supabase
-      await sendMessage(userName, text, userColor);
-      
-      // ล้างช่องพิมพ์ข้อความหลังส่งเสร็จ
-      messageInput.value = '';
-    });
-  }
-});
+        if (error) {
+          console.error('เกิดข้อผิดพลาดในการส่งข้อความ:', error);
+        } else {
+          console.log('ส่งข้อความสำเร็จ:', data);
+        }
+      }
+
+      // === โค้ดเชื่อมปุ่มส่งอัตโนมัติ ===
+      document.addEventListener('DOMContentLoaded', () => {
+        const sendButton = document.querySelector('button[type="submit"]') || document.querySelector('#send-btn') || document.querySelector('.send-btn');
+        const messageInput = document.querySelector('input[type="text"]') || document.querySelector('#message-input') || document.querySelector('.message-input');
+
+        if (sendButton && messageInput) {
+          sendButton.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const text = messageInput.value.trim();
+            if (!text) return;
+
+            const userName = window.currentUserName || 'ผู้ใช้งาน Migang';
+            const userColor = window.currentUserColor || '#3b82f6';
+
+            await sendMessage(userName, text, userColor);
+            
+            messageInput.value = '';
+          });
+        }
+      });
     </script>
-</body>
+  </body>
 </html>
