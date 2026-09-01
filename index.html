@@ -361,6 +361,30 @@
     }
   }
 </script>
+    // โค้ดเชื่อมปุ่มส่งอัตโนมัติ (นำไปวางต่อท้ายได้เลยครับ)
+document.addEventListener('DOMContentLoaded', () => {
+  // ค้นหาปุ่มส่งและช่องพิมพ์ข้อความในหน้าเว็บของคุณ
+  const sendButton = document.querySelector('button[type="submit"]') || document.querySelector('#send-btn') || document.querySelector('.send-btn');
+  const messageInput = document.querySelector('input[type="text"]') || document.querySelector('#message-input') || document.querySelector('.message-input');
+
+  if (sendButton && messageInput) {
+    sendButton.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const text = messageInput.value.trim();
+      if (!text) return;
+
+      // ดึงชื่อผู้ใช้ (ถ้ามี) หรือกำหนดค่าเริ่มต้น
+      const userName = window.currentUserName || 'ผู้ใช้งาน Migang';
+      const userColor = window.currentUserColor || '#3b82f6';
+
+      // เรียกฟังก์ชันส่งข้อมูลเข้า Supabase
+      await sendMessage(userName, text, userColor);
+      
+      // ล้างช่องพิมพ์ข้อความหลังส่งเสร็จ
+      messageInput.value = '';
+    });
+  }
+});
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     </script>
 </body>
