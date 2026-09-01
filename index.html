@@ -7,7 +7,6 @@
     <style>
         body { background: #ffffff; color: #222222; font-family: sans-serif; margin: 0; padding-top: 90px; }
         
-        /* แถบด้านบนสุดตรึงติดจอ (Sticky Top Bar) */
         .top-bar { 
             position: fixed; top: 0; left: 0; width: 100%; 
             background: #ffffff; border-bottom: 2px solid #eee; 
@@ -29,19 +28,16 @@
         .media-upload-btn:hover { background: #74b9ff; }
         input[type="file"] { display: none; }
 
-        /* ส่วนโปรไฟล์วงกลมด้านบน */
         .profile-section { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
         .profile-pic { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px; }
         .profile-info { text-align: right; }
         .user-type { font-size: 11px; color: #666; }
         .user-id { font-size: 13px; font-weight: bold; color: #00b894; }
 
-        /* หน้าต่างแก้ไขชื่อ */
         .modal-wrapper { display: flex; justify-content: center; margin: 15px 20px; }
         #nameModal { display: none; background: #f1f2f6; padding: 15px; border-radius: 5px; border: 1px solid #ddd; width: 100%; max-width: 400px; box-sizing: border-box; }
         .confirm-btn { background: #0984e3; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
 
-        /* พื้นแสดงโพสต์ */
         #feed { max-width: 750px; margin: 0 auto; padding: 10px 20px 40px 20px; display: flex; flex-direction: column; }
 
         .post-group { margin-top: 15px; display: flex; flex-direction: column; align-items: flex-start; }
@@ -96,7 +92,6 @@
 </head>
 <body>
 
-    <!-- แถบด้านบนสุดรวมช่องพิมพ์และโปรไฟล์ -->
     <div class="top-bar">
         <h1>Migang</h1>
 
@@ -126,7 +121,6 @@
         </div>
     </div>
 
-    <!-- หน้าต่างแก้ไขชื่อ -->
     <div class="modal-wrapper">
         <div id="nameModal">
             <p style="margin: 0 0 8px 0; font-size: 14px;">พิมพ์ชื่อใหม่ของคุณ แล้วกด Enter หรือคลิกยืนยัน:</p>
@@ -137,19 +131,15 @@
         </div>
     </div>
 
-    <!-- พื้นที่แสดงแชท -->
     <div id="feed"></div>
 
-    <!-- โหลดไลบรารี Supabase และสคริปต์การทำงานทั้งหมด -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // === 1. ตั้งค่าการเชื่อมต่อ Supabase ===
         const SUPABASE_URL = 'https://kmnezxhrvfocwjzzxifo.supabase.co/rest/v1/';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttbmV6eGhydmZvY3dqenp4aWZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyNzE5MjcsImV4cCI6MjEwMzg0NzkyN30.5Q-7yLJfXM6P3hZf04Br_KySZ77g1Z8JBkj4vbiyjg8';
 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // === 2. ระบบสุ่ม ID และตั้งค่าเริ่มต้น ===
         let currentUserName = "User#" + Math.floor(1000 + Math.random() * 9000);
         let currentUserColor = "#00b894";
         let currentProfileSrc = null;
@@ -310,7 +300,6 @@
             bubblesContainer.appendChild(bubbleWrapper);
         }
 
-        // === 3. ฟังก์ชันบันทึกข้อความลง Supabase และหน้าจอ ===
         async function sendMessageToSupabase(userName, content, userColor) {
             const { data, error } = await supabaseClient
                 .from('messages')
@@ -337,8 +326,6 @@
             textNode.innerText = text;
 
             createPostContainer(textNode);
-            
-            // ส่งข้อมูลเข้า Supabase 
             sendMessageToSupabase(currentUserName, text, currentUserColor);
 
             document.getElementById('box').value = '';
@@ -362,8 +349,6 @@
                 }
 
                 createPostContainer(mediaElement);
-                
-                // ส่ง URL รูปภาพ/สื่อเข้า Supabase
                 sendMessageToSupabase(currentUserName, fileURL, currentUserColor);
 
                 fileInput.value = '';
