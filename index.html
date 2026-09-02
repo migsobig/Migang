@@ -7,6 +7,7 @@
     <style>
         body { background: #ffffff; color: #222222; font-family: sans-serif; margin: 0; padding-top: 90px; }
         
+        /* แถบด้านบนสุดตรึงติดจอ (Sticky Top Bar) */
         .top-bar { 
             position: fixed; top: 0; left: 0; width: 100%; 
             background: #ffffff; border-bottom: 2px solid #eee; 
@@ -28,21 +29,25 @@
         .media-upload-btn:hover { background: #74b9ff; }
         input[type="file"] { display: none; }
 
+        /* ส่วนโปรไฟล์วงกลมด้านบน */
         .profile-section { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
         .profile-pic { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px; }
         .profile-info { text-align: right; }
         .user-type { font-size: 11px; color: #666; }
         .user-id { font-size: 13px; font-weight: bold; color: #00b894; }
 
+        /* หน้าต่างแก้ไขชื่อ */
         .modal-wrapper { display: flex; justify-content: center; margin: 15px 20px; }
         #nameModal { display: none; background: #f1f2f6; padding: 15px; border-radius: 5px; border: 1px solid #ddd; width: 100%; max-width: 400px; box-sizing: border-box; }
         .confirm-btn { background: #0984e3; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
 
+        /* พื้นแสดงโพสต์ */
         #feed { max-width: 750px; margin: 0 auto; padding: 10px 20px 40px 20px; display: flex; flex-direction: column; }
 
         .post-group { margin-top: 15px; display: flex; flex-direction: column; align-items: flex-start; }
         .post-author { font-size: 13px; font-weight: bold; color: #333; margin-bottom: 3px; }
         
+        /* 🛠️ แก้ไขใหม่: แยกโครงสร้างด้วย Grid 2 คอลัมน์ (ซ้าย=รูปโปรไฟล์, ขวา=กล่องข้อความ) ตัดปัญหาการชนและการดันกันโดยสิ้นเชิง */
         .post-bubble-wrapper { 
             display: grid; 
             grid-template-columns: 32px 1fr; 
@@ -61,7 +66,7 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
             box-sizing: border-box;
             word-break: break-word;
-            grid-column: 2;
+            grid-column: 2; /* บังคับให้อยู่ในคอลัมน์ขวาเสมอ */
         }
 
         .post img, .post video {
@@ -72,6 +77,7 @@
             display: block;
         }
 
+        /* รูปโปรไฟล์จิ๋วฝั่งซ้าย ล็อกให้อยู่ในคอลัมน์ซ้ายนิ่งๆ */
         .chat-avatar-inline {
             width: 28px; 
             height: 28px; 
@@ -83,7 +89,7 @@
             justify-content: center;
             color: white;
             font-size: 12px;
-            grid-column: 1;
+            grid-column: 1; /* อยู่คอลัมน์ซ้าย */
             align-self: flex-end;
         }
 
@@ -92,6 +98,7 @@
 </head>
 <body>
 
+    <!-- 🏗️ แถบด้านบนสุดรวมช่องพิมพ์และโปรไฟล์ -->
     <div class="top-bar">
         <h1>Migang</h1>
 
@@ -121,6 +128,7 @@
         </div>
     </div>
 
+    <!-- หน้าต่างแก้ไขชื่อ -->
     <div class="modal-wrapper">
         <div id="nameModal">
             <p style="margin: 0 0 8px 0; font-size: 14px;">พิมพ์ชื่อใหม่ของคุณ แล้วกด Enter หรือคลิกยืนยัน:</p>
@@ -131,15 +139,10 @@
         </div>
     </div>
 
+    <!-- พื้นที่แสดงแชท -->
     <div id="feed"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SUPABASE_URL = 'https://kmnezxhrvfocwjzzxifo.supabase.co/rest/v1/';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttbmV6eGhydmZvY3dqenp4aWZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyNzE5MjcsImV4cCI6MjEwMzg0NzkyN30.5Q-7yLJfXM6P3hZf04Br_KySZ77g1Z8JBkj4vbiyjg8';
-
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
         let currentUserName = "User#" + Math.floor(1000 + Math.random() * 9000);
         let currentUserColor = "#00b894";
         let currentProfileSrc = null;
@@ -226,6 +229,7 @@
                 groupWrapper = topChild;
                 bubblesContainer = groupWrapper.querySelector('.bubbles-container');
                 
+                // ลบรูปโปรไฟล์อันเก่าออกเมื่อมีข้อความใหม่มาต่อในกลุ่มเดิม เพื่อให้เหลือรูปที่ข้อความล่าสุดอันเดียว
                 if (lastMyAvatarWrapper && lastMyAvatarWrapper.parentNode) {
                     let oldAvatar = lastMyAvatarWrapper.querySelector('.chat-avatar-inline');
                     if (oldAvatar) {
@@ -256,6 +260,7 @@
             let bubbleWrapper = document.createElement('div');
             bubbleWrapper.className = 'post-bubble-wrapper';
 
+            // สร้างรูปโปรไฟล์จิ๋วแยกต่างหากในช่องคอลัมน์ซ้าย
             let inlineAvatar;
             if (currentProfileSrc) {
                 inlineAvatar = document.createElement('img');
@@ -300,24 +305,6 @@
             bubblesContainer.appendChild(bubbleWrapper);
         }
 
-        async function sendMessageToSupabase(userName, content, userColor) {
-            const { data, error } = await supabaseClient
-                .from('messages')
-                .insert([
-                    { 
-                        user_name: userName, 
-                        content: content, 
-                        user_color: userColor 
-                    }
-                ]);
-
-            if (error) {
-                console.error('เกิดข้อผิดพลาดในการส่งข้อความ:', error);
-            } else {
-                console.log('ส่งข้อความสำเร็จ:', data);
-            }
-        }
-
         function sendText() {
             let text = document.getElementById('box').value;
             if (text.trim() === '') return;
@@ -326,8 +313,6 @@
             textNode.innerText = text;
 
             createPostContainer(textNode);
-            sendMessageToSupabase(currentUserName, text, currentUserColor);
-
             document.getElementById('box').value = '';
         }
 
@@ -349,11 +334,34 @@
                 }
 
                 createPostContainer(mediaElement);
-                sendMessageToSupabase(currentUserName, fileURL, currentUserColor);
-
                 fileInput.value = '';
             }
         }
+  // === เอาโค้ด Supabase ===
+  const SUPABASE_URL = 'https://kmnezxhrvfocwjzzxifo.supabase.co/rest/v1/';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttbmV6eGhydmZvY3dqenp4aWZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyNzE5MjcsImV4cCI6MjEwMzg0NzkyN30.5Q-7yLJfXM6P3hZf04Br_KySZ77g1Z8JBkj4vbiyjg8';
+
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  async function sendMessage(userName, messageContent, userColor) {
+    const { data, error } = await supabaseClient
+      .from('messages')
+      .insert([
+        { 
+          user_name: userName, 
+          content: messageContent, 
+          user_color: userColor 
+        }
+      ]);
+
+    if (error) {
+      console.error('เกิดข้อผิดพลาดในการส่งข้อความ:', error);
+    } else {
+      console.log('ส่งข้อความสำเร็จ:', data);
+    }
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     </script>
 </body>
 </html>
