@@ -337,29 +337,33 @@
                 fileInput.value = '';
             }
         }
-  // === เอาโค้ด Supabase ===
-  const SUPABASE_URL = 'https://kmnezxhrvfocwjzzxifo.supabase.co/rest/v1/';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttbmV6eGhydmZvY3dqenp4aWZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyNzE5MjcsImV4cCI6MjEwMzg0NzkyN30.5Q-7yLJfXM6P3hZf04Br_KySZ77g1Z8JBkj4vbiyjg8';
+ <!-- โหลดไลบรารี Supabase ไว้ก่อนใช้งาน -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <script>
+      // === โค้ดเชื่อมต่อ Supabase ===
+      const SUPABASE_URL = 'https://kmnezxhrvfocwjzzxifo.supabase.co/rest/v1/';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttbmV6eGhydmZvY3dqenp4aWZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyNzE5MjcsImV4cCI6MjEwMzg0NzkyN30.5Q-7yLJfXM6P3hZf04Br_KySZ77g1Z8JBkj4vbiyjg8';
 
-  async function sendMessage(userName, messageContent, userColor) {
-    const { data, error } = await supabaseClient
-      .from('messages')
-      .insert([
-        { 
-          user_name: userName, 
-          content: messageContent, 
-          user_color: userColor 
+      const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      async function sendMessage(userName, messageContent, userColor) {
+        const { data, error } = await supabaseClient
+          .from('messages')
+          .insert([
+            { 
+              user_name: userName, 
+              content: messageContent, 
+              user_color: userColor 
+            }
+          ]);
+
+        if (error) {
+          console.error('เกิดข้อผิดพลาดในการส่งข้อความ:', error);
+        } else {
+          console.log('ส่งข้อความสำเร็จ:', data);
         }
-      ]);
-
-    if (error) {
-      console.error('เกิดข้อผิดพลาดในการส่งข้อความ:', error);
-    } else {
-      console.log('ส่งข้อความสำเร็จ:', data);
-    }
-  }
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+      }
+    </script>
 </body>
 </html>
