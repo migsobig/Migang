@@ -9,62 +9,154 @@
         
         /* แถบด้านบนสุดตรึงติดจอ (Sticky Top Bar) */
         .top-bar { 
-            position: fixed; top: 0; left: 0; width: 100vw; 
+            position: fixed; top: 0; left: 0; width: 100%; 
             background: #ffffff; border-bottom: 2px solid #eee; 
             padding: 10px 20px; box-sizing: border-box; 
             display: flex; justify-content: space-between; align-items: center; gap: 15px;
             z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             flex-wrap: wrap;
-            transition: background 0.3s, border-color 0.3s, background-size 0.3s, background-position 0.3s;
+            transition: background 0.3s, border-color 0.3s;
         }
 
         /* ☰ สไตล์ปุ่ม 3 ขีดเมนู */
         .menu-toggle-btn {
-            background: none; border: none; font-size: 24px; cursor: pointer; color: inherit; padding: 0 5px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: inherit;
+            padding: 0 5px;
         }
-        .menu-toggle-btn:hover { color: #00b894; }
+        .menu-toggle-btn:hover {
+            color: #00b894;
+        }
 
         /* 📁 สไตล์กล่องเมนูเลื่อน (Slide-out Menu) */
         .side-menu {
-            position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
-            background-color: #ffffff; box-shadow: 4px 0 10px rgba(0,0,0,0.1);
-            transition: left 0.3s ease; z-index: 1100; box-sizing: border-box;
-            display: flex; flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background-color: #ffffff;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+            transition: left 0.3s ease;
+            z-index: 1100;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
         }
-        .side-menu.open { left: 0; }
+        .side-menu.open {
+            left: 0;
+        }
         .side-menu-header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 20px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 16px; color: #00b894;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            font-weight: bold;
+            font-size: 16px;
+            color: #00b894;
         }
-        .close-menu-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: #666; }
-        .side-menu-body { padding: 15px; overflow-y: auto; }
+        .close-menu-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #666;
+        }
+        .side-menu-body {
+            padding: 15px;
+            overflow-y: auto;
+        }
 
         /* ปุ่มเมนูหลักในสไลด์ */
         .menu-item-btn {
-            width: 100%; background: #f1f2f6; border: none; padding: 12px 15px;
-            text-align: left; border-radius: 6px; cursor: pointer; font-weight: bold;
-            color: #333; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;
+            width: 100%;
+            background: #f1f2f6;
+            border: none;
+            padding: 12px 15px;
+            text-align: left;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             transition: background 0.2s;
         }
-        .menu-item-btn:hover { background: #dfe4ea; color: #00b894; }
-
-        /* ส่วนหน้าต่างย่อย (Sub-menu) */
-        .sub-settings-panel { display: none; margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 6px; border: 1px solid #e1e2e6; }
-        .sub-settings-panel.active { display: block; }
-        .setting-sub-btn {
-            width: 100%; background: white; border: 1px solid #ccc; padding: 8px 10px;
-            text-align: left; border-radius: 4px; cursor: pointer; margin-bottom: 6px; font-size: 13px; color: #333;
+        .menu-item-btn:hover {
+            background: #dfe4ea;
+            color: #00b894;
         }
-        .setting-sub-btn:hover { background: #00b894; color: white; border-color: #00b894; }
 
-        /* กล่องย่อยซ้อนข้างใน */
-        .custom-theme-box { display: none; margin-top: 8px; padding: 8px; background: #fff; border-radius: 4px; border: 1px dashed #ccc; font-size: 12px; }
-        .custom-theme-box.active { display: block; }
-        .color-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        /* ส่วนหน้าต่างย่อย (Sub-menu) สำหรับตั้งค่าหน้าจอ */
+        .sub-settings-panel {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e1e2e6;
+        }
+        .sub-settings-panel.active {
+            display: block;
+        }
+        .setting-sub-btn {
+            width: 100%;
+            background: white;
+            border: 1px solid #ccc;
+            padding: 8px 10px;
+            text-align: left;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: #333;
+        }
+        .setting-sub-btn:hover {
+            background: #00b894;
+            color: white;
+            border-color: #00b894;
+        }
+
+        /* กล่องเลือกสีย่อยข้างใน Custom Theme */
+        .custom-theme-box {
+            display: none;
+            margin-top: 8px;
+            padding: 8px;
+            background: #fff;
+            border-radius: 4px;
+            border: 1px dashed #ccc;
+            font-size: 12px;
+        }
+        .custom-theme-box.active {
+            display: block;
+        }
+        .color-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
 
         /* พื้นหลังมืดเวลาเปิดเมนู (Overlay) */
-        .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1050; }
-        .menu-overlay.open { display: block; }
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            display: none;
+            z-index: 1050;
+        }
+        .menu-overlay.open {
+            display: block;
+        }
 
         h1 { color: #00b894; margin: 0; font-size: 24px; transition: color 0.3s; }
         
@@ -96,29 +188,56 @@
         .post-group { margin-top: 15px; display: flex; flex-direction: column; align-items: flex-start; }
         .post-author { font-size: 13px; font-weight: bold; color: inherit; margin-bottom: 3px; }
         
-        .post-bubble-wrapper { display: grid; grid-template-columns: 32px 1fr; align-items: end; gap: 10px; margin-top: 4px; width: 100%; }
-        .post { background: #f9f9f9; color: #333; padding: 10px 14px; border-left: 5px solid #00b894; border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); box-sizing: border-box; word-break: break-word; grid-column: 2; }
-        .post img, .post video { max-width: 100%; max-height: 400px; height: auto; border-radius: 4px; display: block; }
+        .post-bubble-wrapper { 
+            display: grid; 
+            grid-template-columns: 32px 1fr; 
+            align-items: end; 
+            gap: 10px; 
+            margin-top: 4px; 
+            width: 100%;
+        }
+        
+        .post { 
+            background: #f9f9f9; 
+            color: #333; 
+            padding: 10px 14px; 
+            border-left: 5px solid #00b894; 
+            border-radius: 4px; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
+            box-sizing: border-box;
+            word-break: break-word;
+            grid-column: 2;
+        }
+
+        .post img, .post video {
+            max-width: 100%;
+            max-height: 400px;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+        }
 
         .chat-avatar-inline {
-            width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background-color: #ccc;
-            display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; grid-column: 1; align-self: flex-end;
+            width: 28px; 
+            height: 28px; 
+            border-radius: 50%; 
+            object-fit: cover;
+            background-color: #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            grid-column: 1;
+            align-self: flex-end;
         }
-        .color-picker-input { display: none; }
 
-        /* Modal สำหรับเลือกเป้าหมายรูปพื้นหลัง */
-        #bgTargetModal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 2000;
-        }
-        .bg-target-card {
-            background: white; padding: 20px; border-radius: 8px; width: 300px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
+        .color-picker-input { display: none; }
     </style>
 </head>
 <body id="appBody">
 
-    <!-- 📁 โครงสร้างเมนูสไลด์ -->
+    <!-- 📁 ส่วนโครงสร้างเมนูเลื่อน (Slide-out Menu) และ ฉากหลังมืด -->
     <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
     <div id="sideMenu" class="side-menu">
         <div class="side-menu-header">
@@ -126,22 +245,13 @@
             <button class="close-menu-btn" onclick="toggleMenu()">✕</button>
         </div>
         <div class="side-menu-body">
-            
-            <!-- 🖥️ 1. ปรับแต่งขนาดหน้าจอ (โครงสร้างเดิมแบบยังไม่เขียนคำสั่งจริง) -->
-            <button class="menu-item-btn" onclick="toggleSubSettings('sizePanel')">
-                🖥️ ปรับแต่งขนาดหน้าจอ
-            </button>
-            <div id="sizePanel" class="sub-settings-panel">
-                <button class="setting-sub-btn" onclick="alert('เลือก: ปรับขนาดหน้าจออัตโนมัติ')">1. ปรับขนาดอัตโนมัติ (Auto)</button>
-                <button class="setting-sub-btn" onclick="alert('เลือก: ปรับขนาดแบบกำหนดเอง Pixel')">2. ปรับขนาดเอง (Manual Pixel)</button>
-                <button class="setting-sub-btn" onclick="alert('เลือก: เลือกสัดส่วนอุปกรณ์/แนวตั้ง-แนวกว้าง')">3. เลือกสัดส่วนสำเร็จรูป (Preset)</button>
-            </div>
-
-            <!-- 🎨 2. ธีมพื้นหลัง -->
-            <button class="menu-item-btn" onclick="toggleSubSettings('themePanel')">
+            <!-- 🎨 ปุ่มเมนูหลัก "ธีมพื้นหลัง" -->
+            <button class="menu-item-btn" onclick="toggleThemeSubMenu()">
                 🎨 ธีมพื้นหลัง
             </button>
-            <div id="themePanel" class="sub-settings-panel">
+
+            <!-- แผงเมนูย่อยของธีมพื้นหลัง -->
+            <div id="themeSubPanel" class="sub-settings-panel">
                 <!-- ย่อยที่ 1: เลือกธีมสำเร็จรูป -->
                 <button class="setting-sub-btn" onclick="togglePresetList()">1. ธีมสำเร็จรูป (Preset)</button>
                 <div id="presetListBox" class="custom-theme-box">
@@ -149,55 +259,37 @@
                     <button class="setting-sub-btn" onclick="setThemeDarkBlue()">• ดำ-ฟ้า (Dark Blue)</button>
                 </div>
 
-                <!-- ย่อยที่ 2: ธีมแต่งเอง (Custom) -->
+                <!-- ย่อยที่ 2: ธีมแต่งเองแบบอิสระ -->
                 <button class="setting-sub-btn" onclick="toggleCustomThemeBox()">2. ธีมแต่งเอง (Custom)</button>
                 <div id="customThemeBox" class="custom-theme-box">
                     <div class="color-row">
                         <span>สีตัวอักษร:</span>
-                        <input type="color" value="#222222" onchange="applyCustomTextColor(this.value)">
+                        <input type="color" id="pickerTextColor" value="#222222" onchange="applyCustomTextColor(this.value)">
                     </div>
                     <div class="color-row">
                         <span>พื้นหลังข้อความ:</span>
-                        <input type="color" value="#ffffff" onchange="applyCustomFeedBg(this.value)">
+                        <input type="color" id="pickerFeedBg" value="#ffffff" onchange="applyCustomFeedBg(this.value)">
                     </div>
                     <div class="color-row">
                         <span>พื้นหลังแถบบน:</span>
-                        <input type="color" value="#ffffff" onchange="applyCustomTopBarBg(this.value)">
+                        <input type="color" id="pickerTopBarBg" value="#ffffff" onchange="applyCustomTopBarBg(this.value)">
                     </div>
                     <div class="color-row">
                         <span>สีโลโก้แอป:</span>
-                        <input type="color" value="#00b894" onchange="applyCustomLogoColor(this.value)">
+                        <input type="color" id="pickerLogoColor" value="#00b894" onchange="applyCustomLogoColor(this.value)">
                     </div>
-
-                    <!-- ปุ่มอัปโหลดรูปพื้นหลังหลัก -->
-                    <div style="margin-top: 10px; border-top: 1px solid #eee; padding-top: 8px;">
-                        <label class="setting-sub-btn" style="text-align: center; background: #0984e3; color: white; display: block; margin: 0;">
+                    <div style="margin-top: 8px;">
+                        <label class="media-upload-btn" style="width: 100%; text-align: center; display: block; box-sizing: border-box; cursor: pointer;">
                             🖼️ อัปโหลดรูปพื้นหลัง
-                            <input type="file" accept="image/*" onchange="handleBgFileSelected(event)">
+                            <input type="file" accept="image/*" onchange="uploadBgImage(event)">
                         </label>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
-    <!-- หน้าต่างเลือกส่วนที่จะใส่รูปพื้นหลังหลังจากอัปโหลด -->
-    <div id="bgTargetModal">
-        <div class="bg-target-card">
-            <h3 style="margin-top: 0; color: #0984e3; font-size: 16px;">เลือกส่วนที่จะใส่รูปพื้นหลัง</h3>
-            <p style="font-size: 12px; color: #666; margin-bottom: 15px;">คุณต้องการนำรูปนี้ไปใส่ที่ส่วนไหนของเว็บไซต์ครับ?</p>
-            
-            <button class="setting-sub-btn" onclick="applyBgTo('body')">📱 พื้นหลังแอปทั้งหมด</button>
-            <button class="setting-sub-btn" onclick="applyBgTo('topbar')">🔝 พื้นหลังแถบด้านบน (Top Bar)</button>
-            <button class="setting-sub-btn" onclick="applyBgTo('feed')">💬 พื้นหลังโซนข้อความ</button>
-            <button class="setting-sub-btn" onclick="applyBgTo('logo')">✨ โลโก้แอป (Migang)</button>
-            
-            <button class="setting-sub-btn" onclick="closeBgTargetModal()" style="background: #ffeaa7; margin-top: 10px;">❌ ยกเลิก</button>
-        </div>
-    </div>
-
-    <!-- 🏗️ แถบด้านบนสุด -->
+    <!-- 🏗️ แถบด้านบนสุดรวมปุ่ม 3 ขีด ช่องพิมพ์ และโปรไฟล์ -->
     <div class="top-bar" id="topBarElement">
         <div style="display: flex; align-items: center; gap: 10px;">
             <button class="menu-toggle-btn" onclick="toggleMenu()" title="เปิดเมนู">☰</button>
@@ -248,11 +340,11 @@
         let currentUserName = "User#" + Math.floor(1000 + Math.random() * 9000);
         let currentUserColor = "#00b894";
         let currentProfileSrc = null;
-        let tempSelectedBgUrl = ""; // เก็บชั่วคราวก่อนเลือกเป้าหมาย
 
         document.getElementById('displayUserId').innerText = currentUserName;
         let lastMyAvatarWrapper = null; 
 
+        // ฟังก์ชันเปิด-ปิดเมนูหลัก
         function toggleMenu() {
             let menu = document.getElementById('sideMenu');
             let overlay = document.getElementById('menuOverlay');
@@ -260,101 +352,72 @@
             overlay.classList.toggle('open');
         }
 
-        function toggleSubSettings(panelId) {
-            document.getElementById(panelId).classList.toggle('active');
+        // ฟังก์ชันเปิด-ปิดเมนูย่อยธีม
+        function toggleThemeSubMenu() {
+            let panel = document.getElementById('themeSubPanel');
+            panel.classList.toggle('active');
         }
         function togglePresetList() {
-            document.getElementById('presetListBox').classList.toggle('active');
+            let box = document.getElementById('presetListBox');
+            box.classList.toggle('active');
         }
         function toggleCustomThemeBox() {
-            document.getElementById('customThemeBox').classList.toggle('active');
+            let box = document.getElementById('customThemeBox');
+            box.classList.toggle('active');
         }
 
-        // 🎨 ธีมสำเร็จรูป (จะเคลียร์พื้นหลังให้อัตโนมัติ)
+        // 🎨 ธีมสำเร็จรูปที่ 1: ขาวมิ้นต์ (Default)
         function setThemeDefault() {
             let body = document.getElementById('appBody');
             let topBar = document.getElementById('topBarElement');
             let logo = document.getElementById('appLogo');
-            let feed = document.getElementById('feed');
 
-            body.style.backgroundColor = "#ffffff"; body.style.color = "#222222"; body.style.backgroundImage = "none";
-            topBar.style.backgroundColor = "#ffffff"; topBar.style.backgroundImage = "none"; topBar.style.borderColor = "#eee";
-            feed.style.backgroundImage = "none"; logo.style.backgroundImage = "none"; logo.style.color = "#00b894";
+            body.style.backgroundColor = "#ffffff";
+            body.style.color = "#222222";
+            body.style.backgroundImage = "none";
+            topBar.style.backgroundColor = "#ffffff";
+            topBar.style.borderColor = "#eee";
+            logo.style.color = "#00b894";
         }
 
+        // 🎨 ธีมสำเร็จรูปที่ 2: ดำ-ฟ้า (Dark Blue) - ตัวหนังสือขาว
         function setThemeDarkBlue() {
             let body = document.getElementById('appBody');
             let topBar = document.getElementById('topBarElement');
             let logo = document.getElementById('appLogo');
-            let feed = document.getElementById('feed');
 
-            body.style.backgroundColor = "#121212"; body.style.color = "#ffffff"; body.style.backgroundImage = "none";
-            topBar.style.backgroundColor = "#1e1e1e"; topBar.style.backgroundImage = "none"; topBar.style.borderColor = "#333333";
-            feed.style.backgroundImage = "none"; logo.style.backgroundImage = "none"; logo.style.color = "#0984e3";
+            body.style.backgroundColor = "#121212";
+            body.style.color = "#ffffff";
+            body.style.backgroundImage = "none";
+            topBar.style.backgroundColor = "#1e1e1e";
+            topBar.style.borderColor = "#333333";
+            logo.style.color = "#0984e3";
         }
 
-        // 🛠️ ธีมแต่งเอง (Custom Colors)
-        function applyCustomTextColor(color) { document.getElementById('appBody').style.color = color; }
+        // 🛠️ ธีมแต่งเอง (Custom)
+        function applyCustomTextColor(color) {
+            document.getElementById('appBody').style.color = color;
+        }
         function applyCustomFeedBg(color) {
-            let body = document.getElementById('appBody');
-            body.style.backgroundColor = color;
-            body.style.backgroundImage = "none";
+            document.getElementById('appBody').style.backgroundColor = color;
+            document.getElementById('appBody').style.backgroundImage = "none";
         }
         function applyCustomTopBarBg(color) {
-            let topBar = document.getElementById('topBarElement');
-            topBar.style.backgroundColor = color;
-            topBar.style.backgroundImage = "none";
+            document.getElementById('topBarElement').style.backgroundColor = color;
         }
-        function applyCustomLogoColor(color) { document.getElementById('appLogo').style.color = color; }
-
-        // 🖼️ ระบบอัปโหลดรูปพื้นหลัง และเด้งให้เลือกเป้าหมาย
-        function handleBgFileSelected(event) {
+        function applyCustomLogoColor(color) {
+            document.getElementById('appLogo').style.color = color;
+        }
+        function uploadBgImage(event) {
             let file = event.target.files[0];
             if (file) {
-                tempSelectedBgUrl = URL.createObjectURL(file);
-                document.getElementById('bgTargetModal').style.display = 'flex'; // เปิด Popup เลือกเป้าหมาย
-            }
-            event.target.value = ""; // เคลียร์ค่าเพื่อให้เลือกไฟล์เดิมซ้ำได้
-        }
-
-        function closeBgTargetModal() {
-            document.getElementById('bgTargetModal').style.display = 'none';
-            tempSelectedBgUrl = "";
-        }
-
-        function applyBgTo(target) {
-            if (!tempSelectedBgUrl) return;
-
-            if (target === 'body') {
+                let imgURL = URL.createObjectURL(file);
                 let body = document.getElementById('appBody');
-                body.style.backgroundImage = `url('${tempSelectedBgUrl}')`;
+                body.style.backgroundImage = `url('${imgURL}')`;
                 body.style.backgroundSize = "cover";
                 body.style.backgroundPosition = "center";
                 body.style.backgroundAttachment = "fixed";
-                alert("เปลี่ยนพื้นหลังแอปทั้งหมดเรียบร้อย!");
-            } else if (target === 'topbar') {
-                let topBar = document.getElementById('topBarElement');
-                topBar.style.backgroundImage = `url('${tempSelectedBgUrl}')`;
-                topBar.style.backgroundSize = "cover";
-                topBar.style.backgroundPosition = "center";
-                alert("เปลี่ยนพื้นหลังแถบด้านบนเรียบร้อย!");
-            } else if (target === 'feed') {
-                let feed = document.getElementById('feed');
-                feed.style.backgroundImage = `url('${tempSelectedBgUrl}')`;
-                feed.style.backgroundSize = "cover";
-                feed.style.backgroundPosition = "center";
-                alert("เปลี่ยนพื้นหลังโซนข้อความเรียบร้อย!");
-            } else if (target === 'logo') {
-                let logo = document.getElementById('appLogo');
-                logo.style.backgroundImage = `url('${tempSelectedBgUrl}')`;
-                logo.style.backgroundSize = "cover";
-                logo.style.backgroundPosition = "center";
-                logo.style.color = "transparent";
-                logo.style.webkitBackgroundClip = "text";
-                alert("เปลี่ยนพื้นหลังโลโก้เรียบร้อย!");
             }
-
-            closeBgTargetModal();
         }
 
         function changeProfilePic(event) {
@@ -415,21 +478,31 @@
             }
         }
 
-        function checkEnter(event) { if (event.key === 'Enter') saveNewName(); }
-        function checkSendEnter(event) { if (event.key === 'Enter') sendText(); }
+        function checkEnter(event) {
+            if (event.key === 'Enter') saveNewName();
+        }
+
+        function checkSendEnter(event) {
+            if (event.key === 'Enter') sendText();
+        }
 
         function createPostContainer(contentElement) {
             let feed = document.getElementById('feed');
+
             let topChild = feed.firstElementChild;
             let isMyLastGroup = topChild && topChild.getAttribute('data-group-owner') === 'me';
+
             let groupWrapper, bubblesContainer;
 
             if (isMyLastGroup) {
                 groupWrapper = topChild;
                 bubblesContainer = groupWrapper.querySelector('.bubbles-container');
+                
                 if (lastMyAvatarWrapper && lastMyAvatarWrapper.parentNode) {
                     let oldAvatar = lastMyAvatarWrapper.querySelector('.chat-avatar-inline');
-                    if (oldAvatar) oldAvatar.remove();
+                    if (oldAvatar) {
+                        oldAvatar.remove();
+                    }
                 }
             } else {
                 groupWrapper = document.createElement('div');
@@ -489,7 +562,10 @@
                 });
             });
 
-            div.ondblclick = function() { colorInput.click(); };
+            div.ondblclick = function() {
+                colorInput.click();
+            };
+
             bubbleWrapper.appendChild(div);
 
             lastMyAvatarWrapper = bubbleWrapper;
@@ -499,14 +575,17 @@
         function sendText() {
             let text = document.getElementById('box').value;
             if (text.trim() === '') return;
+            
             let textNode = document.createElement('div');
             textNode.innerText = text;
+
             createPostContainer(textNode);
             document.getElementById('box').value = '';
         }
 
         function sendMediaFile() {
             let fileInput = document.getElementById('mediaInput');
+            
             if (fileInput.files && fileInput.files[0]) {
                 let file = fileInput.files[0];
                 let fileURL = URL.createObjectURL(file);
