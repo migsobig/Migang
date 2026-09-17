@@ -30,23 +30,23 @@
             color: #00b894;
         }
 
-        /* 📁 สไตล์กล่องเมนูเลื่อน (Slide-out Menu) แบบเปล่าๆ */
+        /* 📁 สไตล์กล่องเมนูเลื่อน (Slide-out Menu) */
         .side-menu {
             position: fixed;
             top: 0;
-            left: -280px; /* ซ่อนไว้พ้นจอฝั่งซ้าย */
+            left: -280px;
             width: 280px;
             height: 100%;
             background-color: #ffffff;
             box-shadow: 4px 0 10px rgba(0,0,0,0.1);
-            transition: left 0.3s ease; /* เอฟเฟกต์เลื่อนนุ่มๆ */
+            transition: left 0.3s ease;
             z-index: 1100;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
         }
         .side-menu.open {
-            left: 0; /* เลื่อนโผล่เข้ามา */
+            left: 0;
         }
         .side-menu-header {
             display: flex;
@@ -66,9 +66,59 @@
             color: #666;
         }
         .side-menu-body {
-            padding: 20px;
-            color: #666;
-            font-size: 14px;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        /* ปุ่มเมนูย่อยในกล่องสไลด์ */
+        .menu-item-btn {
+            width: 100%;
+            background: #f1f2f6;
+            border: none;
+            padding: 12px 15px;
+            text-align: left;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.2s;
+        }
+        .menu-item-btn:hover {
+            background: #dfe4ea;
+            color: #00b894;
+        }
+
+        /* ส่วนหน้าต่างย่อย (Sub-menu) สำหรับตั้งค่าหน้าจอ */
+        .sub-settings-panel {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e1e2e6;
+        }
+        .sub-settings-panel.active {
+            display: block;
+        }
+        .setting-sub-btn {
+            width: 100%;
+            background: white;
+            border: 1px solid #ccc;
+            padding: 8px 10px;
+            text-align: left;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+        .setting-sub-btn:hover {
+            background: #00b894;
+            color: white;
+            border-color: #00b894;
         }
 
         /* พื้นหลังมืดเวลาเปิดเมนู (Overlay) */
@@ -173,14 +223,23 @@
             <button class="close-menu-btn" onclick="toggleMenu()">✕</button>
         </div>
         <div class="side-menu-body">
-            <p>ยังไม่มีเนื้อหา (เตรียมไว้สำหรับใส่ปุ่มตั้งค่าในสเต็ปถัดไป)</p>
+            <!-- ปุ่มเมนูตั้งค่าหน้าจอ -->
+            <button class="menu-item-btn" onclick="toggleSubSettings()">
+                🖥️ ปรับแต่งขนาดหน้าจอ
+            </button>
+
+            <!-- แผงเมนูย่อย 3 ตัวเลือกตามที่ออกแบบไว้ -->
+            <div id="subSettingsPanel" class="sub-settings-panel">
+                <button class="setting-sub-btn" onclick="alert('เลือก: ปรับขนาดหน้าจออัตโนมัติ')">1. ปรับขนาดอัตโนมัติ (Auto)</button>
+                <button class="setting-sub-btn" onclick="alert('เลือก: ปรับขนาดแบบกำหนดเอง Pixel')">2. ปรับขนาดเอง (Manual Pixel)</button>
+                <button class="setting-sub-btn" onclick="alert('เลือก: เลือกสัดส่วนอุปกรณ์/แนวตั้ง-แนวกว้าง')">3. เลือกสัดส่วนสำเร็จรูป (Preset)</button>
+            </div>
         </div>
     </div>
 
     <!-- 🏗️ แถบด้านบนสุดรวมปุ่ม 3 ขีด ช่องพิมพ์ และโปรไฟล์ -->
     <div class="top-bar">
         <div style="display: flex; align-items: center; gap: 10px;">
-            <!-- ☰ ปุ่มเปิดเมนู 3 ขีด -->
             <button class="menu-toggle-btn" onclick="toggleMenu()" title="เปิดเมนู">☰</button>
             <h1>Migang</h1>
         </div>
@@ -234,12 +293,18 @@
 
         let lastMyAvatarWrapper = null; 
 
-        // ☰ ฟังก์ชันเปิด-ปิดเมนูเลื่อนซ้าย
+        // ☰ ฟังก์ชันเปิด-ปิดเมนูหลัก
         function toggleMenu() {
             let menu = document.getElementById('sideMenu');
             let overlay = document.getElementById('menuOverlay');
             menu.classList.toggle('open');
             overlay.classList.toggle('open');
+        }
+
+        // 🎛️ ฟังก์ชันเปิด-ปิดเมนูย่อย "ปรับแต่งขนาดหน้าจอ"
+        function toggleSubSettings() {
+            let panel = document.getElementById('subSettingsPanel');
+            panel.classList.toggle('active');
         }
 
         function changeProfilePic(event) {
