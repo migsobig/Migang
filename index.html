@@ -17,6 +17,75 @@
             flex-wrap: wrap;
         }
 
+        /* ☰ สไตล์ปุ่ม 3 ขีดเมนู */
+        .menu-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+            padding: 0 5px;
+        }
+        .menu-toggle-btn:hover {
+            color: #00b894;
+        }
+
+        /* 📁 สไตล์กล่องเมนูเลื่อน (Slide-out Menu) แบบเปล่าๆ */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -280px; /* ซ่อนไว้พ้นจอฝั่งซ้าย */
+            width: 280px;
+            height: 100%;
+            background-color: #ffffff;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+            transition: left 0.3s ease; /* เอฟเฟกต์เลื่อนนุ่มๆ */
+            z-index: 1100;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+        .side-menu.open {
+            left: 0; /* เลื่อนโผล่เข้ามา */
+        }
+        .side-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            font-weight: bold;
+            font-size: 16px;
+            color: #00b894;
+        }
+        .close-menu-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #666;
+        }
+        .side-menu-body {
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* พื้นหลังมืดเวลาเปิดเมนู (Overlay) */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            display: none;
+            z-index: 1050;
+        }
+        .menu-overlay.open {
+            display: block;
+        }
+
         h1 { color: #00b894; margin: 0; font-size: 24px; }
         
         .input-section-inline { display: flex; align-items: center; gap: 5px; flex-grow: 1; max-width: 500px; justify-content: center; }
@@ -47,7 +116,6 @@
         .post-group { margin-top: 15px; display: flex; flex-direction: column; align-items: flex-start; }
         .post-author { font-size: 13px; font-weight: bold; color: #333; margin-bottom: 3px; }
         
-        /* 🛠️ แก้ไขใหม่: แยกโครงสร้างด้วย Grid 2 คอลัมน์ (ซ้าย=รูปโปรไฟล์, ขวา=กล่องข้อความ) ตัดปัญหาการชนและการดันกันโดยสิ้นเชิง */
         .post-bubble-wrapper { 
             display: grid; 
             grid-template-columns: 32px 1fr; 
@@ -66,7 +134,7 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
             box-sizing: border-box;
             word-break: break-word;
-            grid-column: 2; /* บังคับให้อยู่ในคอลัมน์ขวาเสมอ */
+            grid-column: 2;
         }
 
         .post img, .post video {
@@ -77,7 +145,6 @@
             display: block;
         }
 
-        /* รูปโปรไฟล์จิ๋วฝั่งซ้าย ล็อกให้อยู่ในคอลัมน์ซ้ายนิ่งๆ */
         .chat-avatar-inline {
             width: 28px; 
             height: 28px; 
@@ -89,7 +156,7 @@
             justify-content: center;
             color: white;
             font-size: 12px;
-            grid-column: 1; /* อยู่คอลัมน์ซ้าย */
+            grid-column: 1;
             align-self: flex-end;
         }
 
@@ -98,9 +165,25 @@
 </head>
 <body>
 
-    <!-- 🏗️ แถบด้านบนสุดรวมช่องพิมพ์และโปรไฟล์ -->
+    <!-- 📁 ส่วนโครงสร้างเมนูเลื่อน (Slide-out Menu) และ ฉากหลังมืด -->
+    <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
+    <div id="sideMenu" class="side-menu">
+        <div class="side-menu-header">
+            <span>เมนูหลัก</span>
+            <button class="close-menu-btn" onclick="toggleMenu()">✕</button>
+        </div>
+        <div class="side-menu-body">
+            <p>ยังไม่มีเนื้อหา (เตรียมไว้สำหรับใส่ปุ่มตั้งค่าในสเต็ปถัดไป)</p>
+        </div>
+    </div>
+
+    <!-- 🏗️ แถบด้านบนสุดรวมปุ่ม 3 ขีด ช่องพิมพ์ และโปรไฟล์ -->
     <div class="top-bar">
-        <h1>Migang</h1>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <!-- ☰ ปุ่มเปิดเมนู 3 ขีด -->
+            <button class="menu-toggle-btn" onclick="toggleMenu()" title="เปิดเมนู">☰</button>
+            <h1>Migang</h1>
+        </div>
 
         <div class="input-section-inline">
             <input type="text" id="box" placeholder="พิมพ์ข้อความสาธารณะที่นี่..." onkeypress="checkSendEnter(event)">
@@ -150,6 +233,14 @@
         document.getElementById('displayUserId').innerText = currentUserName;
 
         let lastMyAvatarWrapper = null; 
+
+        // ☰ ฟังก์ชันเปิด-ปิดเมนูเลื่อนซ้าย
+        function toggleMenu() {
+            let menu = document.getElementById('sideMenu');
+            let overlay = document.getElementById('menuOverlay');
+            menu.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
 
         function changeProfilePic(event) {
             let file = event.target.files[0];
@@ -229,7 +320,6 @@
                 groupWrapper = topChild;
                 bubblesContainer = groupWrapper.querySelector('.bubbles-container');
                 
-                // ลบรูปโปรไฟล์อันเก่าออกเมื่อมีข้อความใหม่มาต่อในกลุ่มเดิม เพื่อให้เหลือรูปที่ข้อความล่าสุดอันเดียว
                 if (lastMyAvatarWrapper && lastMyAvatarWrapper.parentNode) {
                     let oldAvatar = lastMyAvatarWrapper.querySelector('.chat-avatar-inline');
                     if (oldAvatar) {
@@ -260,7 +350,6 @@
             let bubbleWrapper = document.createElement('div');
             bubbleWrapper.className = 'post-bubble-wrapper';
 
-            // สร้างรูปโปรไฟล์จิ๋วแยกต่างหากในช่องคอลัมน์ซ้าย
             let inlineAvatar;
             if (currentProfileSrc) {
                 inlineAvatar = document.createElement('img');
