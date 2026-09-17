@@ -105,6 +105,15 @@
             display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; grid-column: 1; align-self: flex-end;
         }
         .color-picker-input { display: none; }
+
+        /* Modal สำหรับเลือกเป้าหมายรูปพื้นหลัง */
+        #bgTargetModal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 2000;
+        }
+        .bg-target-card {
+            background: white; padding: 20px; border-radius: 8px; width: 300px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body id="appBody">
@@ -118,7 +127,7 @@
         </div>
         <div class="side-menu-body">
             
-            <!-- 🖥️ 1. ปรับแต่งขนาดหน้าจอ (ใส่กลับมาตามเดิมตามคำขอ) -->
+            <!-- 🖥️ 1. ปรับแต่งขนาดหน้าจอ (โครงสร้างเดิมแบบยังไม่เขียนคำสั่งจริง) -->
             <button class="menu-item-btn" onclick="toggleSubSettings('sizePanel')">
                 🖥️ ปรับแต่งขนาดหน้าจอ
             </button>
@@ -160,24 +169,39 @@
                         <input type="color" value="#00b894" onchange="applyCustomLogoColor(this.value)">
                     </div>
 
-                    <div style="margin-top: 8px; font-size: 11px; color: #666; border-top: 1px solid #eee; padding-top: 5px;">
-                        💡 <b>วิธีใส่รูปพื้นหลัง:</b> ให้คลิกที่ช่องเปลี่ยนสีของส่วนนั้นๆ ด้านบน หรือคลิกปุ่มรีเซ็ตด้านล่างเพื่อลบรูปทั้งหมด
+                    <!-- ปุ่มอัปโหลดรูปพื้นหลังหลัก -->
+                    <div style="margin-top: 10px; border-top: 1px solid #eee; padding-top: 8px;">
+                        <label class="setting-sub-btn" style="text-align: center; background: #0984e3; color: white; display: block; margin: 0;">
+                            🖼️ อัปโหลดรูปพื้นหลัง
+                            <input type="file" accept="image/*" onchange="handleBgFileSelected(event)">
+                        </label>
                     </div>
-                    <button class="setting-sub-btn" onclick="removeBgImage()" style="margin-top: 6px; background: #fff5f5; color: #c0392b;">❌ ลบรูปพื้นหลังทั้งหมดออก</button>
                 </div>
             </div>
 
         </div>
     </div>
 
-    <!-- ซ่อน File Input สำหรับเปิดเลือกรูปภาพตามจุดต่างๆ -->
-    <input type="file" id="globalBgInput" accept="image/*" onchange="handleImageSelected(event)">
+    <!-- หน้าต่างเลือกส่วนที่จะใส่รูปพื้นหลังหลังจากอัปโหลด -->
+    <div id="bgTargetModal">
+        <div class="bg-target-card">
+            <h3 style="margin-top: 0; color: #0984e3; font-size: 16px;">เลือกส่วนที่จะใส่รูปพื้นหลัง</h3>
+            <p style="font-size: 12px; color: #666; margin-bottom: 15px;">คุณต้องการนำรูปนี้ไปใส่ที่ส่วนไหนของเว็บไซต์ครับ?</p>
+            
+            <button class="setting-sub-btn" onclick="applyBgTo('body')">📱 พื้นหลังแอปทั้งหมด</button>
+            <button class="setting-sub-btn" onclick="applyBgTo('topbar')">🔝 พื้นหลังแถบด้านบน (Top Bar)</button>
+            <button class="setting-sub-btn" onclick="applyBgTo('feed')">💬 พื้นหลังโซนข้อความ</button>
+            <button class="setting-sub-btn" onclick="applyBgTo('logo')">✨ โลโก้แอป (Migang)</button>
+            
+            <button class="setting-sub-btn" onclick="closeBgTargetModal()" style="background: #ffeaa7; margin-top: 10px;">❌ ยกเลิก</button>
+        </div>
+    </div>
 
     <!-- 🏗️ แถบด้านบนสุด -->
     <div class="top-bar" id="topBarElement">
         <div style="display: flex; align-items: center; gap: 10px;">
             <button class="menu-toggle-btn" onclick="toggleMenu()" title="เปิดเมนู">☰</button>
-            <h1 id="appLogo" onclick="triggerUploadFor('logo')" title="คลิกเพื่อเปลี่ยนรูปพื้นหลังโลโก้" style="cursor: pointer;">Migang</h1>
+            <h1 id="appLogo">Migang</h1>
         </div>
 
         <div class="input-section-inline">
@@ -218,13 +242,13 @@
     </div>
 
     <!-- พื้นที่แสดงแชท -->
-    <div id="feed" onclick="triggerUploadFor('feed')" title="คลิกที่ว่างในโซนข้อความเพื่อเปลี่ยนรูปพื้นหลังโซนข้อความ" style="cursor: pointer; min-height: 200px;"></div>
+    <div id="feed"></div>
 
     <script>
         let currentUserName = "User#" + Math.floor(1000 + Math.random() * 9000);
         let currentUserColor = "#00b894";
         let currentProfileSrc = null;
-        let activeTargetForBg = ""; // เก็บเป้าหมายที่จะเปลี่ยนรูปพื้นหลัง
+        let tempSelectedBgUrl = ""; // เก็บชั่วคราวก่อนเลือกเป้าหมาย
 
         document.getElementById('displayUserId').innerText = currentUserName;
         let lastMyAvatarWrapper = null; 
@@ -246,7 +270,7 @@
             document.getElementById('customThemeBox').classList.toggle('active');
         }
 
-        // 🎨 ธีมสำเร็จรูป
+        // 🎨 ธีมสำเร็จรูป (จะเคลียร์พื้นหลังให้อัตโนมัติ)
         function setThemeDefault() {
             let body = document.getElementById('appBody');
             let topBar = document.getElementById('topBarElement');
@@ -283,57 +307,54 @@
         }
         function applyCustomLogoColor(color) { document.getElementById('appLogo').style.color = color; }
 
-        // 🖼️ ระบบคลิกเลือกเป้าหมายเพื่ออัปโหลดรูปพื้นหลัง
-        function triggerUploadFor(targetName) {
-            activeTargetForBg = targetName;
-            document.getElementById('globalBgInput').click(); // สั่งเปิดหน้าต่างเลือกไฟล์ทันที
-        }
-
-        function handleImageSelected(event) {
+        // 🖼️ ระบบอัปโหลดรูปพื้นหลัง และเด้งให้เลือกเป้าหมาย
+        function handleBgFileSelected(event) {
             let file = event.target.files[0];
             if (file) {
-                let imageUrl = URL.createObjectURL(file);
-
-                if (activeTargetForBg === 'body') {
-                    let body = document.getElementById('appBody');
-                    body.style.backgroundImage = `url('${imageUrl}')`;
-                    body.style.backgroundSize = "cover";
-                    body.style.backgroundPosition = "center";
-                    body.style.backgroundAttachment = "fixed";
-                    alert("เปลี่ยนรูปพื้นหลังแอปทั้งหมดเรียบร้อย!");
-                } else if (activeTargetForBg === 'topbar') {
-                    let topBar = document.getElementById('topBarElement');
-                    topBar.style.backgroundImage = `url('${imageUrl}')`;
-                    topBar.style.backgroundSize = "cover";
-                    topBar.style.backgroundPosition = "center";
-                    alert("เปลี่ยนรูปพื้นหลังแถบด้านบนเรียบร้อย!");
-                } else if (activeTargetForBg === 'feed') {
-                    let feed = document.getElementById('feed');
-                    feed.style.backgroundImage = `url('${imageUrl}')`;
-                    feed.style.backgroundSize = "cover";
-                    feed.style.backgroundPosition = "center";
-                    alert("เปลี่ยนรูปพื้นหลังโซนข้อความเรียบร้อย!");
-                } else if (activeTargetForBg === 'logo') {
-                    let logo = document.getElementById('appLogo');
-                    logo.style.backgroundImage = `url('${imageUrl}')`;
-                    logo.style.backgroundSize = "cover";
-                    logo.style.backgroundPosition = "center";
-                    logo.style.color = "transparent"; // ซ่อนสีตัวอักษรเดิมเพื่อให้เห็นรูปชัดๆ
-                    logo.style.webkitBackgroundClip = "text";
-                    alert("เปลี่ยนรูปพื้นหลังโลโก้เรียบร้อย!");
-                }
+                tempSelectedBgUrl = URL.createObjectURL(file);
+                document.getElementById('bgTargetModal').style.display = 'flex'; // เปิด Popup เลือกเป้าหมาย
             }
-            event.target.value = ""; //เคลียร์ค่าเพื่อให้เลือกไฟล์เดิมซ้ำได้
+            event.target.value = ""; // เคลียร์ค่าเพื่อให้เลือกไฟล์เดิมซ้ำได้
         }
 
-        function removeBgImage() {
-            document.getElementById('appBody').style.backgroundImage = "none";
-            document.getElementById('topBarElement').style.backgroundImage = "none";
-            document.getElementById('feed').style.backgroundImage = "none";
-            let logo = document.getElementById('appLogo');
-            logo.style.backgroundImage = "none";
-            logo.style.color = "#00b894";
-            alert("ลบรูปพื้นหลังทั้งหมดออกแล้ว!");
+        function closeBgTargetModal() {
+            document.getElementById('bgTargetModal').style.display = 'none';
+            tempSelectedBgUrl = "";
+        }
+
+        function applyBgTo(target) {
+            if (!tempSelectedBgUrl) return;
+
+            if (target === 'body') {
+                let body = document.getElementById('appBody');
+                body.style.backgroundImage = `url('${tempSelectedBgUrl}')`;
+                body.style.backgroundSize = "cover";
+                body.style.backgroundPosition = "center";
+                body.style.backgroundAttachment = "fixed";
+                alert("เปลี่ยนพื้นหลังแอปทั้งหมดเรียบร้อย!");
+            } else if (target === 'topbar') {
+                let topBar = document.getElementById('topBarElement');
+                topBar.style.backgroundImage = `url('${tempSelectedBgUrl}')`;
+                topBar.style.backgroundSize = "cover";
+                topBar.style.backgroundPosition = "center";
+                alert("เปลี่ยนพื้นหลังแถบด้านบนเรียบร้อย!");
+            } else if (target === 'feed') {
+                let feed = document.getElementById('feed');
+                feed.style.backgroundImage = `url('${tempSelectedBgUrl}')`;
+                feed.style.backgroundSize = "cover";
+                feed.style.backgroundPosition = "center";
+                alert("เปลี่ยนพื้นหลังโซนข้อความเรียบร้อย!");
+            } else if (target === 'logo') {
+                let logo = document.getElementById('appLogo');
+                logo.style.backgroundImage = `url('${tempSelectedBgUrl}')`;
+                logo.style.backgroundSize = "cover";
+                logo.style.backgroundPosition = "center";
+                logo.style.color = "transparent";
+                logo.style.webkitBackgroundClip = "text";
+                alert("เปลี่ยนพื้นหลังโลโก้เรียบร้อย!");
+            }
+
+            closeBgTargetModal();
         }
 
         function changeProfilePic(event) {
