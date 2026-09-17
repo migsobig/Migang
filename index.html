@@ -9,13 +9,13 @@
         
         /* แถบด้านบนสุดตรึงติดจอ (Sticky Top Bar) */
         .top-bar { 
-            position: fixed; top: 0; left: 0; width: 100%; 
+            position: fixed; top: 0; left: 0; width: 100vw; 
             background: #ffffff; border-bottom: 2px solid #eee; 
             padding: 10px 20px; box-sizing: border-box; 
             display: flex; justify-content: space-between; align-items: center; gap: 15px;
             z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             flex-wrap: wrap;
-            transition: background 0.3s, border-color 0.3s;
+            transition: background 0.3s, border-color 0.3s, background-size 0.3s, background-position 0.3s;
         }
 
         /* ☰ สไตล์ปุ่ม 3 ขีดเมนู */
@@ -93,7 +93,7 @@
             color: #00b894;
         }
 
-        /* ส่วนหน้าต่างย่อย (Sub-menu) สำหรับตั้งค่าหน้าจอ */
+        /* ส่วนหน้าต่างย่อย (Sub-menu) */
         .sub-settings-panel {
             display: none;
             margin-top: 10px;
@@ -123,7 +123,7 @@
             border-color: #00b894;
         }
 
-        /* กล่องเลือกสีย่อยข้างใน Custom Theme */
+        /* กล่องย่อยซ้อนข้างใน */
         .custom-theme-box {
             display: none;
             margin-top: 8px;
@@ -237,7 +237,7 @@
 </head>
 <body id="appBody">
 
-    <!-- 📁 ส่วนโครงสร้างเมนูเลื่อน (Slide-out Menu) และ ฉากหลังมืด -->
+    <!-- 📁 โครงสร้างเมนูสไลด์ -->
     <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
     <div id="sideMenu" class="side-menu">
         <div class="side-menu-header">
@@ -245,13 +245,22 @@
             <button class="close-menu-btn" onclick="toggleMenu()">✕</button>
         </div>
         <div class="side-menu-body">
-            <!-- 🎨 ปุ่มเมนูหลัก "ธีมพื้นหลัง" -->
-            <button class="menu-item-btn" onclick="toggleThemeSubMenu()">
+            
+            <!-- 🖥️ ปุ่มเมนู 1: ปรับแต่งขนาดหน้าจอ (โครงสร้างเดิม) -->
+            <button class="menu-item-btn" onclick="toggleSubSettings('sizePanel')">
+                🖥️ ปรับแต่งขนาดหน้าจอ
+            </button>
+            <div id="sizePanel" class="sub-settings-panel">
+                <button class="setting-sub-btn" onclick="alert('เลือก: ปรับขนาดหน้าจออัตโนมัติ')">1. ปรับขนาดอัตโนมัติ (Auto)</button>
+                <button class="setting-sub-btn" onclick="alert('เลือก: ปรับขนาดแบบกำหนดเอง Pixel')">2. ปรับขนาดเอง (Manual Pixel)</button>
+                <button class="setting-sub-btn" onclick="alert('เลือก: เลือกสัดส่วนอุปกรณ์/แนวตั้ง-แนวกว้าง')">3. เลือกสัดส่วนสำเร็จรูป (Preset)</button>
+            </div>
+
+            <!-- 🎨 ปุ่มเมนู 2: ธีมพื้นหลัง -->
+            <button class="menu-item-btn" onclick="toggleSubSettings('themePanel')">
                 🎨 ธีมพื้นหลัง
             </button>
-
-            <!-- แผงเมนูย่อยของธีมพื้นหลัง -->
-            <div id="themeSubPanel" class="sub-settings-panel">
+            <div id="themePanel" class="sub-settings-panel">
                 <!-- ย่อยที่ 1: เลือกธีมสำเร็จรูป -->
                 <button class="setting-sub-btn" onclick="togglePresetList()">1. ธีมสำเร็จรูป (Preset)</button>
                 <div id="presetListBox" class="custom-theme-box">
@@ -264,32 +273,39 @@
                 <div id="customThemeBox" class="custom-theme-box">
                     <div class="color-row">
                         <span>สีตัวอักษร:</span>
-                        <input type="color" id="pickerTextColor" value="#222222" onchange="applyCustomTextColor(this.value)">
+                        <input type="color" value="#222222" onchange="applyCustomTextColor(this.value)">
                     </div>
                     <div class="color-row">
                         <span>พื้นหลังข้อความ:</span>
-                        <input type="color" id="pickerFeedBg" value="#ffffff" onchange="applyCustomFeedBg(this.value)">
+                        <input type="color" value="#ffffff" onchange="applyCustomFeedBg(this.value)">
                     </div>
                     <div class="color-row">
                         <span>พื้นหลังแถบบน:</span>
-                        <input type="color" id="pickerTopBarBg" value="#ffffff" onchange="applyCustomTopBarBg(this.value)">
+                        <input type="color" value="#ffffff" onchange="applyCustomTopBarBg(this.value)">
                     </div>
                     <div class="color-row">
                         <span>สีโลโก้แอป:</span>
-                        <input type="color" id="pickerLogoColor" value="#00b894" onchange="applyCustomLogoColor(this.value)">
+                        <input type="color" value="#00b894" onchange="applyCustomLogoColor(this.value)">
                     </div>
-                    <div style="margin-top: 8px;">
-                        <label class="media-upload-btn" style="width: 100%; text-align: center; display: block; box-sizing: border-box; cursor: pointer;">
-                            🖼️ อัปโหลดรูปพื้นหลัง
-                            <input type="file" accept="image/*" onchange="uploadBgImage(event)">
-                        </label>
+
+                    <!-- ส่วนอัปโหลดรูปและเลือกเป้าหมายที่จะใส่พื้นหลัง -->
+                    <div style="margin-top: 10px; border-top: 1px solid #eee; padding-top: 8px;">
+                        <span style="font-weight: bold; display: block; margin-bottom: 4px;">🖼️ อัปโหลดรูปพื้นหลัง:</span>
+                        <input type="file" id="bgImageFile" accept="image/*" onchange="previewBgImage(event)" style="display: block; font-size: 11px; margin-bottom: 6px;">
+                        
+                        <span style="font-weight: bold; display: block; margin-bottom: 4px;">เลือกส่วนที่จะใส่รูป:</span>
+                        <button class="setting-sub-btn" onclick="applyImageToTarget('body')">• ใส่เป็นพื้นหลังแอปทั้งหมด</button>
+                        <button class="setting-sub-btn" onclick="applyImageToTarget('topbar')">• ใส่เป็นพื้นหลังแถบด้านบน</button>
+                        <button class="setting-sub-btn" onclick="applyImageToTarget('feed')">• ใส่เป็นพื้นหลังโซนข้อความ</button>
+                        <button class="setting-sub-btn" onclick="removeBgImage()" style="color: cchin; background: #fff5f5;">❌ ลบรูปพื้นหลังออก</button>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
-    <!-- 🏗️ แถบด้านบนสุดรวมปุ่ม 3 ขีด ช่องพิมพ์ และโปรไฟล์ -->
+    <!-- 🏗️ แถบด้านบนสุด -->
     <div class="top-bar" id="topBarElement">
         <div style="display: flex; align-items: center; gap: 10px;">
             <button class="menu-toggle-btn" onclick="toggleMenu()" title="เปิดเมนู">☰</button>
@@ -340,6 +356,7 @@
         let currentUserName = "User#" + Math.floor(1000 + Math.random() * 9000);
         let currentUserColor = "#00b894";
         let currentProfileSrc = null;
+        let uploadedBgUrl = "";
 
         document.getElementById('displayUserId').innerText = currentUserName;
         let lastMyAvatarWrapper = null; 
@@ -352,9 +369,9 @@
             overlay.classList.toggle('open');
         }
 
-        // ฟังก์ชันเปิด-ปิดเมนูย่อยธีม
-        function toggleThemeSubMenu() {
-            let panel = document.getElementById('themeSubPanel');
+        // เปิด-ปิดเมนูย่อยอเนกประสงค์
+        function toggleSubSettings(panelId) {
+            let panel = document.getElementById(panelId);
             panel.classList.toggle('active');
         }
         function togglePresetList() {
@@ -366,58 +383,108 @@
             box.classList.toggle('active');
         }
 
-        // 🎨 ธีมสำเร็จรูปที่ 1: ขาวมิ้นต์ (Default)
+        // 🎨 ธีมสำเร็จรูป: ขาวมิ้นต์ (Default)
         function setThemeDefault() {
             let body = document.getElementById('appBody');
             let topBar = document.getElementById('topBarElement');
             let logo = document.getElementById('appLogo');
+            let feed = document.getElementById('feed');
 
             body.style.backgroundColor = "#ffffff";
             body.style.color = "#222222";
             body.style.backgroundImage = "none";
             topBar.style.backgroundColor = "#ffffff";
+            topBar.style.backgroundImage = "none";
             topBar.style.borderColor = "#eee";
+            feed.style.backgroundImage = "none";
             logo.style.color = "#00b894";
+            uploadedBgUrl = "";
         }
 
-        // 🎨 ธีมสำเร็จรูปที่ 2: ดำ-ฟ้า (Dark Blue) - ตัวหนังสือขาว
+        // 🎨 ธีมสำเร็จรูป: ดำ-ฟ้า (Dark Blue)
         function setThemeDarkBlue() {
             let body = document.getElementById('appBody');
             let topBar = document.getElementById('topBarElement');
             let logo = document.getElementById('appLogo');
+            let feed = document.getElementById('feed');
 
             body.style.backgroundColor = "#121212";
             body.style.color = "#ffffff";
             body.style.backgroundImage = "none";
             topBar.style.backgroundColor = "#1e1e1e";
+            topBar.style.backgroundImage = "none";
             topBar.style.borderColor = "#333333";
+            feed.style.backgroundImage = "none";
             logo.style.color = "#0984e3";
+            uploadedBgUrl = "";
         }
 
-        // 🛠️ ธีมแต่งเอง (Custom)
+        // 🛠️ ธีมแต่งเอง (Custom Colors)
         function applyCustomTextColor(color) {
             document.getElementById('appBody').style.color = color;
         }
         function applyCustomFeedBg(color) {
-            document.getElementById('appBody').style.backgroundColor = color;
-            document.getElementById('appBody').style.backgroundImage = "none";
+            let body = document.getElementById('appBody');
+            body.style.backgroundColor = color;
+            body.style.backgroundImage = "none";
         }
         function applyCustomTopBarBg(color) {
-            document.getElementById('topBarElement').style.backgroundColor = color;
+            let topBar = document.getElementById('topBarElement');
+            topBar.style.backgroundColor = color;
+            topBar.style.backgroundImage = "none";
         }
         function applyCustomLogoColor(color) {
             document.getElementById('appLogo').style.color = color;
         }
-        function uploadBgImage(event) {
+
+        // 🖼️ จัดการรูปภาพพื้นหลังตามเป้าหมายที่เลือก
+        function previewBgImage(event) {
             let file = event.target.files[0];
             if (file) {
-                let imgURL = URL.createObjectURL(file);
+                uploadedBgUrl = URL.createObjectURL(file);
+                alert("อัปโหลดรูปสำเร็จ! ตอนนี้เลือกปุ่มเป้าหมายด้านล่างเพื่อนำรูปไปใส่ได้เลยครับ");
+            }
+        }
+
+        function applyImageToTarget(target) {
+            if (!uploadedBgUrl) {
+                alert("กรุณาอัปโหลดรูปภาพก่อนเลือกเป้าหมายครับ!");
+                return;
+            }
+
+            if (target === 'body') {
                 let body = document.getElementById('appBody');
-                body.style.backgroundImage = `url('${imgURL}')`;
+                body.style.backgroundImage = `url('${uploadedBgUrl}')`;
                 body.style.backgroundSize = "cover";
                 body.style.backgroundPosition = "center";
                 body.style.backgroundAttachment = "fixed";
+                alert("เปลี่ยนพื้นหลังแอปทั้งหมดเรียบร้อย!");
+            } else if (target === 'topbar') {
+                let topBar = document.getElementById('topBarElement');
+                topBar.style.backgroundImage = `url('${uploadedBgUrl}')`;
+                topBar.style.backgroundSize = "cover";
+                topBar.style.backgroundPosition = "center";
+                alert("เปลี่ยนพื้นหลังแถบด้านบนเรียบร้อย!");
+            } else if (target === 'feed') {
+                let feed = document.getElementById('feed');
+                feed.style.backgroundImage = `url('${uploadedBgUrl}')`;
+                feed.style.backgroundSize = "cover";
+                feed.style.backgroundPosition = "center";
+                alert("เปลี่ยนพื้นหลังโซนข้อความเรียบร้อย!");
             }
+        }
+
+        function removeBgImage() {
+            let body = document.getElementById('appBody');
+            let topBar = document.getElementById('topBarElement');
+            let feed = document.getElementById('feed');
+
+            body.style.backgroundImage = "none";
+            topBar.style.backgroundImage = "none";
+            feed.style.backgroundImage = "none";
+            uploadedBgUrl = "";
+            document.getElementById('bgImageFile').value = "";
+            alert("ลบรูปพื้นหลังทั้งหมดออกแล้ว!");
         }
 
         function changeProfilePic(event) {
