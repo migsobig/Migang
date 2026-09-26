@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Migang</title>
     
+    <!-- 🌟 🌟 🌟 [MODULE 1: CSS & STYLES] โครงสร้างหน้าตาและการตกแต่งเว็บ 🌟 🌟 🌟 -->
     <style>
         body { background: #ffffff; color: #222222; font-family: sans-serif; margin: 0; padding-top: 90px; transition: background 0.3s, color 0.3s; }
         
@@ -237,7 +238,7 @@
 </head>
 <body id="appBody">
 
-    <!-- 📁 ส่วนโครงสร้างเมนูเลื่อน (Slide-out Menu) และ ฉากหลังมืด -->
+    <!-- 📁 🌟 🌟 [MODULE 2.1] ส่วนโครงสร้างเมนูเลื่อน (Slide-out Menu) และ ฉากหลังมืด -->
     <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
     <div id="sideMenu" class="side-menu">
         <div class="side-menu-header">
@@ -289,7 +290,7 @@
         </div>
     </div>
 
-    <!-- 🏗️ แถบด้านบนสุดรวมปุ่ม 3 ขีด ช่องพิมพ์ และโปรไฟล์ -->
+    <!-- 🏗️ 🌟 🌟 [MODULE 2.2] แถบด้านบนสุดรวมปุ่ม 3 ขีด ช่องพิมพ์ และโปรไฟล์ -->
     <div class="top-bar" id="topBarElement">
         <div style="display: flex; align-items: center; gap: 10px;">
             <button class="menu-toggle-btn" onclick="toggleMenu()" title="เปิดเมนู">☰</button>
@@ -322,7 +323,7 @@
         </div>
     </div>
 
-    <!-- หน้าต่างแก้ไขชื่อ -->
+    <!-- 📝 🌟 🌟 [MODULE 2.3] หน้าต่างแก้ไขชื่อและพื้นที่แสดงแชท -->
     <div class="modal-wrapper">
         <div id="nameModal">
             <p style="margin: 0 0 8px 0; font-size: 14px;">พิมพ์ชื่อใหม่ของคุณ แล้วกด Enter หรือคลิกยืนยัน:</p>
@@ -333,9 +334,9 @@
         </div>
     </div>
 
-    <!-- พื้นที่แสดงแชท -->
+    <!-- พื้นที่แสดงแชทฟีด -->
     <div id="feed"></div>
-
+        <!-- ⚙️ 🌟 🌟 [MODULE 3] ตัวแปรระบบและการจัดการสถานะ -->
     <script>
         let currentUserName = "User#" + Math.floor(1000 + Math.random() * 9000);
         let currentUserColor = "#00b894";
@@ -344,6 +345,7 @@
         document.getElementById('displayUserId').innerText = currentUserName;
         let lastMyAvatarWrapper = null; 
 
+        <!-- 🎨 🌟 🌟 [MODULE 4] ระบบควบคุมเมนูและธีม (Menu & Theme Engine) -->
         // ฟังก์ชันเปิด-ปิดเมนูหลัก
         function toggleMenu() {
             let menu = document.getElementById('sideMenu');
@@ -420,6 +422,7 @@
             }
         }
 
+        <!-- 💬 🌟 🌟 [MODULE 5] ระบบโปรไฟล์ และ ระบบการส่งข้อความ/มีเดีย (Profile & Chat Engine) -->
         function changeProfilePic(event) {
             let file = event.target.files[0];
             if (file) {
