@@ -200,11 +200,17 @@
         }
 
         .post-bubble-wrapper { 
-            display: flex; /* เปลี่ยนจาก grid เป็น flex */
-            align-items: flex-end; 
+            display: grid; 
+            grid-template-columns: 32px max-content; /* ล็อกความกว้างช่องโปรไฟล์ 32px ช่องกล่องข้อความยืดตามเนื้อหา */
+            align-items: end; 
             gap: 10px; 
             margin-top: 4px; 
             max-width: 100%;
+        }
+
+        /* กรณีเป็นกล่องข้อความอันบนๆ ที่ไม่มีรูปโปรไฟล์ ให้ดันกล่องข้อความไปคอลัมน์ที่ 2 เพื่อให้ขอบซ้ายตรงกับกล่องล่าง */
+        .post-bubble-wrapper:not(:has(.chat-avatar-inline)) .post {
+            grid-column: 2;
         }
         
         .post { 
@@ -216,10 +222,10 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
             box-sizing: border-box;
             word-break: break-word;
-            width: fit-content; /* ให้ความกว้างปรับตามข้อความข้างในจริงๆ */
+            grid-column: 2;
             max-width: 100%;
         }
-
+        
         .post img, .post video {
             max-width: 100%;
             max-height: 400px;
