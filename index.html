@@ -200,12 +200,10 @@
         }
 
         .post-bubble-wrapper { 
-            display: grid; 
-            grid-template-columns: 32px 1fr; 
-            align-items: end; 
+            display: flex; /* เปลี่ยนจาก grid เป็น flex */
+            align-items: flex-end; 
             gap: 10px; 
             margin-top: 4px; 
-            width: fit-content; /* เปลี่ยนจาก width: 100% เป็นอันนี้ เพื่อให้ความกว้างปรับตามขนาดกล่องจริง */
             max-width: 100%;
         }
         
@@ -218,8 +216,8 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
             box-sizing: border-box;
             word-break: break-word;
-            grid-column: 2;
-            max-width: 100%; /* ป้องกันการล้นกรอบ */
+            width: fit-content; /* ให้ความกว้างปรับตามข้อความข้างในจริงๆ */
+            max-width: 100%;
         }
 
         .post img, .post video {
