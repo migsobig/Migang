@@ -433,7 +433,7 @@
             }
         }
 
-        <!-- 💬 🌟 🌟 [MODULE 5] ระบบโปรไฟล์ และ ระบบการส่งข้อความ/มีเดีย (Profile & Chat Engine) -->
+        // 💬 🌟 🌟 [MODULE 5] ระบบโปรไฟล์ และ ระบบการส่งข้อความ/มีเดีย (Profile & Chat Engine)
         function changeProfilePic(event) {
             let file = event.target.files[0];
             if (file) {
@@ -533,6 +533,7 @@
                 bubblesContainer.style.display = "flex";
                 bubblesContainer.style.flexDirection = "column";
                 bubblesContainer.style.gap = "4px";
+                bubblesContainer.style.alignItems = "flex-start"; // 🌟 ป้องกันกล่องยืดตามตัวยาว
                 bubblesContainer.className = "bubbles-container";
                 
                 groupWrapper.appendChild(bubblesContainer);
